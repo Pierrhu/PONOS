@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0C0C10">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="PONOS">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Cinzel+Decorative:wght@400;700;900&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+
+<style>
+  /* ── SPLASH SCREEN ── */
+  #splash-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: #0C0C10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: env(safe-area-inset-top) 32px env(safe-area-inset-bottom);
+    overflow: hidden;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #splash-screen.fade-out {
+    animation: splashFadeOut 0.7s cubic-bezier(0.4, 0, 1, 1) forwards;
+  }
+
+  @keyframes splashFadeOut {
+    0%   { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.04); pointer-events: none; }
+  }
+
+  /* Arrière-plan texturé et dramatique */
+  .splash-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 10%, rgba(194,59,59,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(194,59,59,0.06) 0%, transparent 60%),
+      #0C0C10;
+  }
+
+  /* Lignes décoratives horizontales */
+  .splash-lines {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0.06;
+  }
+  .splash-lines::before,
+  .splash-lines::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #C23B3B, transparent);
+  }
+  .splash-lines::before { top: 30%; }
+  .splash-lines::after { top: 70%; }
+
+  /* Losange décoratif */
+  .splash-diamond {
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border: 1px solid rgba(194,59,59,0.08);
+    transform: rotate(45deg);
+    border-radius: 4px;
+    top: 50%;
+    left: 50%;
+    margin: -160px 0 0 -160px;
+    animation: diamondPulse 4s ease-in-out infinite;
+  }
+  .splash-diamond-inner {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    border: 1px solid rgba(194,59,59,0.12);
+    transform: rotate(45deg);
+    border-radius: 3px;
+    top: 50%;
+    left: 50%;
+    margin: -100px 0 0 -100px;
+    animation: diamondPulse 4s ease-in-out infinite 0.5s;
+  }
+  @keyframes diamondPulse {
+    0%,100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* Contenu central */
+  .splash-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* Logo / Emblème */
+  .splash-emblem {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: splashItemIn 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.2s forwards;
+  }
+
+  /* Bouclier spartiate SVG */
+  .splash-shield {
+    width: 80px;
+    height: 80px;
+    filter: drop-shadow(0 0 20px rgba(194,59,59,0.5));
+  }
+
+  /* Séparateur ornementé */
+  .splash-ornament {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    opacity: 0;
+    animation: splashItemIn 0.7s ease 0.6s forwards;
+  }
+  .splash-ornament-line {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(194,59,59,0.6));
+  }
+  .splash-ornament-line:last-child {
+    background: linear-gradient(90deg, rgba(194,59,59,0.6), transparent);
+  }
+  .splash-ornament-dot {
+    width: 5px;
+    height: 5px;
+    background: #C23B3B;
+    transform: rotate(45deg);
+    opacity: 0.8;
+  }
+
+  /* Titre principal */
+  .splash-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(28px, 8vw, 38px);
+    font-weight: 900;
+    color: #EDEDF0;
+    letter-spacing: 0.08em;
+    text-align: center;
+    line-height: 1.1;
+    opacity: 0;
+    animation: splashItemIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.4s forwards;
+    text-shadow: 0 0 40px rgba(194,59,59,0.3);
+  }
+  .splash-title span {
+    color: #C23B3B;
+  }
+
+  /* Sous-titre */
+  .splash-subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(194,59,59,0.7);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-top: 8px;
+    opacity: 0;
+    animation: splashItemIn 0.7s ease 0.55s forwards;
+  }
+
+  /* Citation */
+  /* MISSION BRIEFING */
+  .splash-mission {
+    margin-top: 28px;
+    text-align: center;
+    max-width: 300px;
+    opacity: 0;
+    animation: splashItemIn 0.8s ease 0.85s forwards;
+  }
+  .splash-mission-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    font-weight: 400;
+    color: rgba(194,59,59,0.55);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .splash-mission-day {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(22px, 6vw, 28px);
+    font-weight: 700;
+    color: #EDEDF0;
+    letter-spacing: 0.08em;
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(194,59,59,0.3);
+  }
+  .splash-mission-sub {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--accent, rgba(194,59,59,0.7));
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .splash-mission-divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px auto;
+    width: 160px;
+  }
+  .splash-mission-divider-line {
+    flex: 1;
+    height: 1px;
+    background: var(--accent, rgba(194,59,59,0.3));
+    opacity: 0.4;
+  }
+  .splash-mission-divider-diamond {
+    width: 5px;
+    height: 5px;
+    background: var(--accent, rgba(194,59,59,0.5));
+    transform: rotate(45deg);
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+  .splash-mission-exos {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .splash-mission-exo {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: rgba(221,221,224,0.55);
+    letter-spacing: 0.02em;
+  }
+  .splash-mission-exo::before {
+    content: '—  ';
+    color: rgba(194,59,59,0.4);
+  }
+
+  /* Invite à toucher */
+  .splash-tap {
+    position: absolute;
+    bottom: calc(44px + env(safe-area-inset-bottom));
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: rgba(221,221,224,0.25);
+    text-transform: uppercase;
+    opacity: 0;
+    animation: splashItemIn 0.6s ease 1.5s forwards, splashBlink 2.5s ease-in-out 2s infinite;
+  }
+
+  /* Bouton champ de bataille */
+  .splash-battlefield-btn {
+    margin-top: 28px;
+    padding: 16px 28px;
+    background: rgba(194,59,59,0.10);
+    border: 1.5px solid rgba(194,59,59,0.55);
+    border-radius: 3px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #C23B3B;
+    opacity: 0;
+    animation: splashItemIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 1s forwards;
+    box-shadow: 0 0 24px rgba(194,59,59,0.12), inset 0 0 12px rgba(194,59,59,0.04);
+    transition: background 0.2s, box-shadow 0.2s, border-color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    overflow: visible;
+  }
+  /* ── TRANSITION "LE SCEAU SE BRISE" ── */
+
+  .splash-battlefield-btn.ignite {
+    animation: btnSeal 0.45s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+  }
+  @keyframes btnSeal {
+    0%   { transform: scale(1);    background: rgba(194,59,59,0.10); color: #C23B3B; border-color: rgba(194,59,59,0.55); }
+    35%  { transform: scale(0.94); background: rgba(194,59,59,0.05); }
+    65%  { transform: scale(1.06); background: #C23B3B; color: #fff; border-color: #FF5050; box-shadow: 0 0 40px rgba(194,59,59,0.8); }
+    100% { transform: scale(0.98); opacity: 0; }
+  }
+
+  #battle-transition {
+    position: fixed; inset: 0; z-index: 9998;
+    pointer-events: none; display: none;
+  }
+  #battle-transition.active { display: block; }
+
+  /* Anneau 1 — principal, bien visible */
+  #bt-ring-a {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    /* scale() pour GPU — démarre visible */
+    transform: translate(-50%, -50%) scale(0.8);
+    border: 4px solid rgba(194,59,59,1);
+    box-shadow: 0 0 0 1px rgba(255,100,100,0.4), inset 0 0 0 1px rgba(255,100,100,0.2);
+    opacity: 0;
+  }
+  #bt-ring-a.fire {
+    animation: ringScale 1.0s cubic-bezier(0.2, 0.8, 0.25, 1) forwards;
+  }
+
+  /* Anneau 2 — décalé, plus fin */
+  #bt-ring-b {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    border: 1.5px solid rgba(194,59,59,0.55);
+    opacity: 0;
+  }
+  #bt-ring-b.fire {
+    animation: ringScale 1.1s cubic-bezier(0.15, 0.8, 0.2, 1) 0.15s forwards;
+  }
+
+  @keyframes ringScale {
+    0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+    15%  { opacity: 1; }
+    70%  { opacity: 0.5; }
+    100% { transform: translate(-50%, -50%) scale(35);  opacity: 0; }
+  }
+
+  /* Voile sombre — arrive APRÈS les anneaux */
+  #bt-veil {
+    position: absolute; inset: 0;
+    background: #0C0C10;
+    opacity: 0;
+  }
+  #bt-veil.fire {
+    animation: veilFade 0.55s cubic-bezier(0.55, 0, 1, 1) forwards;
+  }
+  @keyframes veilFade {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  .splash-battlefield-icon { font-size: 18px; filter: drop-shadow(0 0 6px rgba(194,59,59,0.6)); }
+  .splash-battlefield-text { text-shadow: 0 0 20px rgba(194,59,59,0.4); }
+
+  @keyframes splashItemIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes splashBlink {
+    0%,100% { opacity: 0.25; }
+    50%      { opacity: 0.55; }
+  }
+
+  /* Grains (bruit de fond) */
+  .splash-grain {
+    position: absolute;
+    inset: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+    pointer-events: none;
+  }
+</style>
+
+<style>
+  /* ── Safe Area iOS — Dynamic Island / Notch ── */
+
+  .page {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .nav {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .session-bar {
+    top: env(safe-area-inset-top);
+  }
+
+  .swipe-panel {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .modal-box {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+
+  .pr-celebrate-overlay {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .recap-box {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  }
+</style>
+
+<title>PONOS</title>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- SPLASH SCREEN -->
+<!-- BATTLE TRANSITION OVERLAY -->
+<div id="battle-transition">
+  <div id="bt-ring-a"></div>
+  <div id="bt-ring-b"></div>
+  <div id="bt-veil"></div>
+</div>
+
+<div id="splash-screen" onclick="dismissSplash()">
+  <div class="splash-bg"></div>
+  <div class="splash-grain"></div>
+  <div class="splash-lines"></div>
+  <div class="splash-diamond"></div>
+  <div class="splash-diamond-inner"></div>
+
+  <div class="splash-content">
+    <!-- Bouclier spartiate SVG -->
+    <div class="splash-emblem">
+      <svg class="splash-shield" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Forme du bouclier -->
+        <path d="M40 4 L72 16 L72 44 Q72 64 40 76 Q8 64 8 44 L8 16 Z"
+              fill="none" stroke="#C23B3B" stroke-width="1.5" opacity="0.8"/>
+        <!-- Bouclier intérieur -->
+        <path d="M40 10 L66 20 L66 43 Q66 60 40 71 Q14 60 14 43 L14 20 Z"
+              fill="rgba(194,59,59,0.06)" stroke="rgba(194,59,59,0.3)" stroke-width="0.8"/>
+        <!-- Lettre grecque Λ (Lambda — Sparte) -->
+        <path d="M28 57 L40 28 L52 57" stroke="#C23B3B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <line x1="32" y1="50" x2="48" y2="50" stroke="#C23B3B" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+        <!-- Rivets décoratifs -->
+        <circle cx="40" cy="15" r="1.5" fill="rgba(194,59,59,0.5)"/>
+        <circle cx="20" cy="26" r="1" fill="rgba(194,59,59,0.3)"/>
+        <circle cx="60" cy="26" r="1" fill="rgba(194,59,59,0.3)"/>
+      </svg>
+    </div>
+
+    <div class="splash-title">PONOS<span>.</span></div>
+    <div class="splash-subtitle">Forged, not born</div>
+
+    <div class="splash-ornament">
+      <div class="splash-ornament-line"></div>
+      <div class="splash-ornament-dot"></div>
+      <div class="splash-ornament-line"></div>
+    </div>
+
+    <button class="splash-battlefield-btn" id="splash-battlefield-btn" onclick="event.stopPropagation(); goToBattlefield()">
+      <span class="splash-battlefield-icon">⚔️</span>
+      <span class="splash-battlefield-text">Entrer sur le champ de bataille</span>
+    </button>
+  </div>
+
+  <div class="splash-tap">Toucher pour continuer dans l'app</div>
+</div>
+
+<script>
+  // Gestion du splash screen
+  (function() {
+    const SESSION_KEY = 'ponos-splash-session-seen';
+    if (sessionStorage.getItem(SESSION_KEY)) {
+      document.getElementById('splash-screen').style.display = 'none';
+    }
+  })();
+
+  function goToBattlefield() {
+    const btn    = document.getElementById('splash-battlefield-btn');
+    const splash = document.getElementById('splash-screen');
+    const tr     = document.getElementById('battle-transition');
+
+    btn.style.pointerEvents = 'none';
+    tr.classList.add('active');
+
+    // 1 — Bouton : compression → explosion (0ms)
+    btn.classList.add('ignite');
+
+    // 2 — Anneaux depuis le centre (300ms)
+    //     Les anneaux partent d'une taille visible (100px) et scalent jusqu'à couvrir l'écran
+    setTimeout(() => {
+      document.getElementById('bt-ring-a').classList.add('fire');
+      document.getElementById('bt-ring-b').classList.add('fire');
+    }, 300);
+
+    // 3 — Contenu du splash s'efface doucement (650ms)
+    setTimeout(() => {
+      const content = splash.querySelector('.splash-content');
+      const tap     = splash.querySelector('.splash-tap');
+      if (content) {
+        content.style.transition = 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.4,0,1,1)';
+        content.style.opacity    = '0';
+        content.style.transform  = 'scale(1.06) translateY(-12px)';
+      }
+      if (tap) { tap.style.opacity = '0'; tap.style.transition = 'opacity 0.3s'; }
+    }, 650);
+
+    // 4 — Voile final APRÈS les anneaux (1100ms)
+    setTimeout(() => {
+      document.getElementById('bt-veil').classList.add('fire');
+    }, 1100);
+
+    // 5 — Dashboard (1600ms)
+    setTimeout(() => {
+      splash.style.display = 'none';
+      tr.style.display     = 'none';
+      sessionStorage.setItem('ponos-splash-session-seen', 'true');
+    }, 1600);
+  }
+
+  function dismissSplash() {
+    const el = document.getElementById('splash-screen');
+    if (!el || el.style.display === 'none') return;
+    el.classList.add('fade-out');
+    sessionStorage.setItem('ponos-splash-session-seen', 'true');
+    setTimeout(() => { el.style.display = 'none'; }, 700);
+  }
+
+  // Disparaît automatiquement après 6s
+  setTimeout(() => { dismissSplash(); }, 6000);
+</script>
+
+<div id="toast" class="toast"></div>
+
+<!-- EDIT SESSION MODAL -->
+<div class="modal-overlay hidden" id="edit-modal">
+  <div class="modal-box">
+    <div class="modal-title" id="edit-modal-title">Modifier la séance</div>
+    <div id="edit-modal-body"></div>
+    <button class="btn-primary" id="edit-modal-save" style="background:var(--blue)" onclick="saveEditSession()">Enregistrer les modifications ✓</button>
+    <button class="modal-cancel" onclick="closeEditModal()">Annuler</button>
+    <button class="btn-danger" id="edit-modal-delete" style="display:none" onclick="">Supprimer cette entrée</button>
+  </div>
+</div>
+
+<!-- SWIPE PANEL INFO EXERCICE -->
+<div class="swipe-overlay" id="swipe-overlay" onclick="closeInfoModal()"></div>
+<div class="swipe-panel" id="swipe-panel">
+  <div class="swipe-handle"></div>
+  <div class="swipe-panel-header">
+    <div class="swipe-panel-title" id="swipe-panel-title"></div>
+    <button class="swipe-panel-close" onclick="closeInfoModal()">✕</button>
+  </div>
+  <div class="swipe-panel-body" id="swipe-panel-body"></div>
+</div>
+
+<!-- PR CELEBRATION MODAL -->
+<div class="pr-celebrate-overlay hidden" id="pr-celebrate" onclick="closePRCelebrate()">
+  <canvas class="pr-confetti" id="pr-confetti"></canvas>
+  <div class="pr-celebrate-gif" id="pr-celebrate-gif"></div>
+  <div class="pr-celebrate-title" id="pr-celebrate-title"></div>
+  <div class="pr-celebrate-detail" id="pr-celebrate-detail"></div>
+  <div class="pr-celebrate-close">Touche pour fermer</div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay hidden" id="import-modal">
+  <div class="modal-box">
+    <div class="modal-title">Charger un fichier Excel</div>
+    <div class="import-drop-zone" id="import-drop-zone" onclick="document.getElementById('import-file-input').click()">
+      <div class="drop-icon" style="font-size:24px;color:var(--text3)">↓</div>
+      <div class="drop-title">Sélectionner un fichier Excel</div>
+      <div class="drop-sub">Ou glisse-dépose ton fichier .xlsx ici</div>
+    </div>
+    <input type="file" id="import-file-input" accept=".xlsx,.xls" style="display:none" onchange="handleImportFile(this)">
+    <div class="import-preview" id="import-preview" style="display:none"></div>
+    <button class="btn-primary" id="import-confirm-btn" style="background:var(--blue);display:none" onclick="confirmImport()">Importer les séances ✓</button>
+    <button class="modal-cancel" onclick="closeImportModal()">Annuler</button>
+  </div>
+</div>
+
+<!-- VICTORY OVERLAY -->
+<div class="victory-overlay hidden" id="victory-overlay" onclick="closeVictory()">
+  <div class="victory-bg"></div>
+  <div class="victory-lines"></div>
+  <div class="victory-content">
+    <div class="victory-emblem">
+      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M40 4 L72 16 L72 44 Q72 64 40 76 Q8 64 8 44 L8 16 Z"
+              fill="none" stroke="var(--victory-accent, #C23B3B)" stroke-width="1.5" opacity="0.9"/>
+        <path d="M40 10 L66 20 L66 43 Q66 60 40 71 Q14 60 14 43 L14 20 Z"
+              fill="rgba(194,59,59,0.06)" stroke="var(--victory-accent, #C23B3B)" stroke-width="0.8" opacity="0.5"/>
+        <path d="M28 57 L40 28 L52 57" stroke="var(--victory-accent, #C23B3B)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <line x1="32" y1="50" x2="48" y2="50" stroke="var(--victory-accent, #C23B3B)" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <div class="victory-label">Séance accomplie</div>
+    <div class="victory-day" id="victory-day">JOUR A</div>
+
+    <div class="victory-ornament">
+      <div class="victory-ornament-line"></div>
+      <div class="victory-ornament-dot"></div>
+      <div class="victory-ornament-line"></div>
+    </div>
+
+    <div class="victory-stats">
+      <div class="victory-stat">
+        <div class="victory-stat-val" id="victory-sets">—</div>
+        <div class="victory-stat-label">Séries</div>
+      </div>
+      <div class="victory-stat-sep"></div>
+      <div class="victory-stat">
+        <div class="victory-stat-val" id="victory-exos">—</div>
+        <div class="victory-stat-label">Exercices</div>
+      </div>
+      <div class="victory-stat-sep"></div>
+      <div class="victory-stat">
+        <div class="victory-stat-val" id="victory-time">—</div>
+        <div class="victory-stat-label">Durée</div>
+      </div>
+    </div>
+
+    <div class="victory-vol-wrap">
+      <div class="victory-vol-label">Volume total</div>
+      <div class="victory-vol-val" id="victory-vol">— kg</div>
+    </div>
+
+  </div>
+  <div class="victory-tap">Toucher pour continuer</div>
+</div>
+
+<!-- WEEKLY RECAP -->
+<div class="recap-overlay hidden" id="recap-overlay" onclick="closeRecap()">
+  <div class="recap-box" onclick="event.stopPropagation()" id="recap-box"></div>
+</div>
+
+<!-- SESSION TIMER BAR -->
+<div class="session-bar" id="session-bar">
+  <div class="session-dot"></div>
+  <div class="session-time" id="session-time">00:00</div>
+  <div class="session-label">Séance en cours</div>
+  <button class="session-stop" onclick="stopSession();showToast('Séance arrêtée')">Arrêter</button>
+</div>
+
+<!-- CYCLING MODAL -->
+<div class="modal-overlay hidden" id="velo-modal" onclick="if(event.target===this)closeVeloModal()">
+  <div class="modal-box">
+    <div class="modal-title">🚴 Ajouter une sortie vélo</div>
+    <div class="velo-input-row">
+      <div class="velo-field">
+        <label>Distance (km)</label>
+        <input type="number" inputmode="decimal" id="velo-distance" placeholder="ex: 42">
+      </div>
+      <div class="velo-field">
+        <label>Durée (min)</label>
+        <input type="number" inputmode="numeric" id="velo-duration" placeholder="ex: 90">
+      </div>
+    </div>
+    <div class="velo-input-row">
+      <div class="velo-field">
+        <label>Type de sortie</label>
+        <select id="velo-type">
+          <option value="endurance">Endurance (30-40 km)</option>
+          <option value="long">Sortie longue (100+ km)</option>
+          <option value="recup">Récupération active</option>
+        </select>
+      </div>
+    </div>
+    <div class="velo-input-row">
+      <div class="velo-field">
+        <label>Date</label>
+        <input type="date" id="velo-date">
+      </div>
+    </div>
+    <button class="btn-primary" style="background:var(--yellow)" onclick="saveVeloSession()">Enregistrer la sortie</button>
+    <button class="modal-cancel" onclick="closeVeloModal()">Annuler</button>
+  </div>
+</div>
+
+<!-- REST TIMER -->
+<div class="rest-timer" id="rest-timer">
+  <div>
+    <div class="rest-timer-time" id="rest-timer-time">0:00</div>
+    <div class="rest-timer-label" id="rest-timer-label">Repos</div>
+  </div>
+  <div style="flex:1">
+    <div class="rest-timer-bar"><div class="rest-timer-fill" id="rest-timer-fill"></div></div>
+  </div>
+  <div class="rest-timer-btns">
+    <button class="rest-timer-btn rest-timer-skip" onclick="skipRestTimer()">✕</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<div class="nav" id="nav"></div>
+
+<!-- PAGES -->
+<div class="page" id="page-workout"></div>
+<div class="page" id="page-rank"></div>
+<div class="page" id="page-progress"></div>
+<div class="page" id="page-body"></div>
+<div class="page" id="page-history"></div>
+<div class="page" id="page-programs"></div>
+
+<!-- APP -->
+<!-- Data -->
+<script src="data/program.js"></script>
+<script src="data/standards.js"></script>
+<!-- Core -->
+<script src="js/state.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/timers.js"></script>
+<!-- Modules -->
+<script src="js/workout.js"></script>
+<script src="js/rank.js"></script>
+<script src="js/progress.js"></script>
+<script src="js/body.js"></script>
+<script src="js/history.js"></script>
+<script src="js/velo.js"></script>
+<script src="js/export.js"></script>
+<!-- UI -->
+<script src="js/modals.js"></script>
+<script src="data/programs.js"></script>
+<script src="js/programEditor.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+
+</body>
+</html>
